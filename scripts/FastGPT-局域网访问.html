@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FastGPT 局域网访问</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            padding: 40px;
+            max-width: 600px;
+            width: 100%;
+        }
+        h1 {
+            color: #667eea;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 32px;
+        }
+        .info-box {
+            background: #f7f9fc;
+            border-left: 4px solid #667eea;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .info-box h2 {
+            color: #333;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+        .info-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .info-item:last-child { border-bottom: none; }
+        .label {
+            color: #666;
+            font-weight: 500;
+        }
+        .value {
+            color: #333;
+            font-weight: 600;
+            font-family: 'Courier New', monospace;
+        }
+        .btn {
+            display: inline-block;
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            text-align: center;
+            text-decoration: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: 600;
+            margin: 10px 0;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.4);
+        }
+        .btn-secondary {
+            background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
+        }
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            background: #4caf50;
+            color: white;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: 600;
+        }
+        .footer {
+            text-align: center;
+            margin-top: 30px;
+            color: #666;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🚀 FastGPT 局域网访问</h1>
+        
+        <div class="info-box">
+            <h2>📡 服务器信息</h2>
+            <div class="info-item">
+                <span class="label">服务器IP:</span>
+                <span class="value">172.26.240.1</span>
+            </div>
+            <div class="info-item">
+                <span class="label">服务状态:</span>
+                <span class="status">运行中</span>
+            </div>
+        </div>
+
+        <a href="http://" class="btn" target="_blank">
+            🌟 打开 FastGPT
+        </a>
+
+        <a href="http://" class="btn btn-secondary" target="_blank">
+            📦 MinIO 控制台
+        </a>
+
+        <div class="info-box">
+            <h2>🔑 登录信息</h2>
+            <div class="info-item">
+                <span class="label">FastGPT 用户名:</span>
+                <span class="value">root</span>
+            </div>
+            <div class="info-item">
+                <span class="label">FastGPT 密码:</span>
+                <span class="value">1234</span>
+            </div>
+            <div class="info-item">
+                <span class="label">MinIO 用户名:</span>
+                <span class="value">minioadmin</span>
+            </div>
+            <div class="info-item">
+                <span class="label">MinIO 密码:</span>
+                <span class="value">minioadmin</span>
+            </div>
+        </div>
+
+        <div class="footer">
+            <p>💡 提示: 请确保设备在同一局域网内</p>
+            <p>生成时间: 2025-12-17 09:44:18</p>
+        </div>
+    </div>
+</body>
+</html>

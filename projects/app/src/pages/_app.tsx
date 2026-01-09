@@ -18,6 +18,7 @@ import { getWebReqUrl } from '@fastgpt/web/common/system/utils';
 import SystemStoreContextProvider from '@fastgpt/web/context/useSystem';
 import { useRouter } from 'next/router';
 import { errorLogger } from '@/web/common/utils/errorLogger';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 type NextPageWithLayout = NextPage & {
   setLayout?: (page: ReactElement) => JSX.Element;
@@ -59,7 +60,7 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
 
   if (router.pathname === '/openapi') {
     return (
-      <>
+      <ErrorBoundary>
         {showHead && (
           <NextHead
             title={title}
@@ -68,12 +69,12 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
           />
         )}
         {setLayout(<Component {...pageProps} />)}
-      </>
+      </ErrorBoundary>
     );
   }
 
   return (
-    <>
+    <ErrorBoundary>
       {showHead && (
         <NextHead
           title={title}
@@ -95,7 +96,7 @@ function App({ Component, pageProps }: AppPropsWithLayout) {
           </ChakraUIContext>
         </SystemStoreContextProvider>
       </QueryClientContext>
-    </>
+    </ErrorBoundary>
   );
 }
 

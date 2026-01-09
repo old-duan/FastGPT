@@ -8,7 +8,10 @@ const queryClient = new QueryClient({
       keepPreviousData: true,
       refetchOnWindowFocus: false,
       retry: false,
-      cacheTime: 10,
+      // 缓存5分钟，避免重复请求
+      cacheTime: 5 * 60 * 1000,
+      // 数据在1分钟内认为是新鲜的
+      staleTime: 60 * 1000,
       networkMode: 'always'
     }
   }

@@ -40,3 +40,10 @@ coverage
 document/.source
 
 projects/app/worker/
+# 备份文件（不提交到 Git）
+backup/
+*.backup
+*.dump
+*.rdb
+*.zip
+*.tar.gz

@@ -69,7 +69,7 @@ export const ChatSettingContextProvider = ({ children }: { children: React.React
         if (
           pane === ChatSidebarPaneEnum.HOME &&
           appId !== data.appId &&
-          data.quickAppList.every((q) => q._id !== appId)
+          (data.quickAppList || []).every((q) => q._id !== appId)
         ) {
           handlePaneChange(ChatSidebarPaneEnum.HOME, data.appId);
         }

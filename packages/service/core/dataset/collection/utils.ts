@@ -12,11 +12,19 @@ import {
   TrainingModeEnum
 } from '@fastgpt/global/core/dataset/constants';
 import { DatasetErrEnum } from '@fastgpt/global/common/error/code/dataset';
-import { readDatasetSourceRawText } from '../read';
+import { readDatasetSourceRawText, rawText2Chunks } from '../read';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 import { mongoSessionRun } from '../../../common/mongo/sessionRun';
-import { createCollectionAndInsertData, delCollection } from './controller';
+import { delCollection } from './controller';
 import { collectionCanSync } from '@fastgpt/global/core/dataset/collection/utils';
+import { addLog } from '../../../common/system/log';
+import { MongoDatasetData } from '../data/schema';
+import { pushDataListToTrainingQueue } from '../training/controller';
+import { getLLMModel, getEmbeddingModel } from '../../../core/ai/model';
+import { getLLMMaxChunkSize } from '@fastgpt/global/core/dataset/training/utils';
+import { createTrainingUsage } from '../../../support/wallet/usage/controller';
+import { UsageSourceEnum } from '@fastgpt/global/support/wallet/usage/constants';
+import { DatasetDataIndexTypeEnum } from '@fastgpt/global/core/dataset/data/constants';
 
 /**
  * get all collection by top collectionId
@@ -174,31 +182,97 @@ export const syncCollection = async (collection: CollectionWithDatasetType) => {
 
   // Check if the original text is the same: skip if same
   const hashRawText = hashStr(rawText);
-  if (collection.hashRawText && hashRawText !== collection.hashRawText) {
+
+  // If first sync (no hashRawText) or content changed, import data
+  if (!collection.hashRawText || hashRawText !== collection.hashRawText) {
     await mongoSessionRun(async (session) => {
-      // Delete old collection
-      await delCollection({
-        collections: [collection],
-        delImg: false,
-        delFile: false,
+      addLog.info(`[syncCollection] Content changed or first sync for: ${collection._id}`);
+
+      // Delete old data if exists
+      if (collection.hashRawText) {
+        addLog.info(`[syncCollection] Deleting old data`);
+        await MongoDatasetData.deleteMany({ collectionId: collection._id }, { session });
+      }
+
+      // Split text into chunks
+      const chunks = await rawText2Chunks({
+        rawText,
+        chunkTriggerType: collection.chunkTriggerType,
+        chunkTriggerMinSize: collection.chunkTriggerMinSize,
+        chunkSize: collection.chunkSize,
+        paragraphChunkDeep: collection.paragraphChunkDeep,
+        paragraphChunkMinSize: collection.paragraphChunkMinSize,
+        maxSize: getLLMMaxChunkSize(getLLMModel(dataset.agentModel)),
+        overlapRatio:
+          collection.trainingType === DatasetCollectionDataProcessModeEnum.chunk ? 0.2 : 0,
+        customReg: collection.chunkSplitter ? [collection.chunkSplitter] : [],
+        backupParse: false
+      });
+
+      addLog.info(`[syncCollection] Split into ${chunks.length} chunks`);
+
+      // Create training bill
+      const { usageId } = await createTrainingUsage({
+        teamId: collection.teamId,
+        tmbId: collection.tmbId,
+        appName: collection.name,
+        billSource: UsageSourceEnum.training,
+        vectorModel: getEmbeddingModel(dataset.vectorModel)?.name,
+        agentModel: getLLMModel(dataset.agentModel)?.name,
         session
       });
 
-      // Create new collection
-      await createCollectionAndInsertData({
-        session,
-        dataset,
-        rawText: rawText,
-        createCollectionParams: {
-          ...collection,
-          name: title || collection.name,
-          updateTime: new Date(),
-          tags: await collectionTagsToTagLabel({
-            datasetId: collection.datasetId,
-            tags: collection.tags
-          })
-        }
+      // Get training mode
+      const trainingMode = getTrainingModeByCollection({
+        trainingType: collection.trainingType,
+        autoIndexes: collection.autoIndexes,
+        imageIndex: collection.imageIndex
       });
+
+      // Push to training queue
+      const { insertLen } = await pushDataListToTrainingQueue({
+        teamId: collection.teamId,
+        tmbId: collection.tmbId,
+        datasetId: collection.datasetId,
+        collectionId: collection._id,
+        agentModel: dataset.agentModel,
+        vectorModel: dataset.vectorModel,
+        vlmModel: dataset.vlmModel,
+        indexSize: collection.indexSize,
+        mode: trainingMode,
+        billId: usageId,
+        data: chunks.map((item, index) => ({
+          ...item,
+          indexes: item.indexes?.map((text) => ({
+            type: DatasetDataIndexTypeEnum.custom,
+            text
+          })),
+          chunkIndex: index
+        })),
+        session
+      });
+
+      addLog.info(`[syncCollection] Inserted ${insertLen} training jobs`);
+
+      // Update collection metadata
+      await MongoDatasetCollection.findByIdAndUpdate(
+        collection._id,
+        {
+          $set: {
+            name: title || collection.name,
+            hashRawText: hashRawText,
+            rawTextLength: rawText.length,
+            updateTime: new Date(),
+            tags: await collectionTagsToTagLabel({
+              datasetId: collection.datasetId,
+              tags: collection.tags
+            })
+          }
+        },
+        { session }
+      );
+
+      addLog.info(`[syncCollection] Collection updated successfully: ${collection._id}`);
     });
 
     return DatasetCollectionSyncResultEnum.success;

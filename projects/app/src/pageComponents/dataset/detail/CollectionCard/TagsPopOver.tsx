@@ -41,7 +41,7 @@ const TagsPopOver = ({
     () =>
       (collectionTags
         ?.map((item) => {
-          const tagObject = allDatasetTags.find((tag) => tag.tag === item);
+          const tagObject = allDatasetTags?.find((tag) => tag.tag === item);
           return tagObject ? { _id: tagObject._id, tag: tagObject.tag } : null;
         })
         .filter((tag) => tag !== null) as {
@@ -170,7 +170,7 @@ const TagsPopOver = ({
               </Box>
               <Box my={1} px={1.5} maxH={'200px'} overflow={'auto'}>
                 {searchTagKey &&
-                  !searchDatasetTagsResult.map((item) => item.tag).includes(searchTagKey) && (
+                  !searchDatasetTagsResult?.map((item) => item.tag).includes(searchTagKey) && (
                     <Flex
                       alignItems={'center'}
                       fontSize={'xs'}
@@ -187,7 +187,7 @@ const TagsPopOver = ({
                     </Flex>
                   )}
                 {searchDatasetTagsResult?.map((item) => {
-                  const tagsList = checkedTags.map((tag) => tag.tag);
+                  const tagsList = checkedTags?.map((tag) => tag.tag) || [];
                   return (
                     <Flex
                       alignItems={'center'}

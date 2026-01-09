@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>产品介绍 - FastGPT 测试站点</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+            line-height: 1.6;
+        }
+        h1 { color: #2c3e50; }
+        h2 { color: #3498db; }
+        h3 { color: #27ae60; }
+        .content {
+            background: #f9f9f9;
+            padding: 20px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        nav {
+            background: #34495e;
+            padding: 10px;
+            margin-bottom: 20px;
+        }
+        nav a {
+            color: white;
+            text-decoration: none;
+            padding: 10px 15px;
+            display: inline-block;
+        }
+        nav a:hover {
+            background: #2c3e50;
+        }
+        .feature {
+            border-left: 4px solid #3498db;
+            padding-left: 15px;
+            margin: 15px 0;
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="index.html">首页</a>
+        <a href="about.html">关于我们</a>
+        <a href="products.html">产品介绍</a>
+        <a href="contact.html">联系方式</a>
+    </nav>
+
+    <h1>产品功能介绍</h1>
+    
+    <div class="content">
+        <h2>知识库管理</h2>
+        
+        <div class="feature">
+            <h3>多源数据接入</h3>
+            <p>支持多种数据源导入知识库:</p>
+            <ul>
+                <li><strong>文件上传</strong>: 支持 PDF、Word、Markdown、TXT 等常见格式</li>
+                <li><strong>网站抓取</strong>: 自动爬取网站内容,支持自定义选择器</li>
+                <li><strong>API 接入</strong>: 通过 API 对接第三方数据源</li>
+                <li><strong>手动录入</strong>: 支持直接在系统中编辑知识条目</li>
+            </ul>
+        </div>
+
+        <div class="feature">
+            <h3>智能分块处理</h3>
+            <p>系统会自动将长文本切分为合适的块大小,支持:</p>
+            <ul>
+                <li>自定义分块大小(256-1500 tokens)</li>
+                <li>智能段落识别</li>
+                <li>QA 拆分模式</li>
+                <li>保留上下文关联</li>
+            </ul>
+        </div>
+
+        <div class="feature">
+            <h3>向量化存储</h3>
+            <p>将文本转换为向量,实现语义检索:</p>
+            <ul>
+                <li>支持多种 Embedding 模型</li>
+                <li>高性能向量检索</li>
+                <li>混合检索(向量+关键词)</li>
+                <li>相似度阈值控制</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>应用编排</h2>
+        
+        <div class="feature">
+            <h3>可视化工作流</h3>
+            <p>通过拖拽方式编排应用流程:</p>
+            <ul>
+                <li>知识库搜索节点</li>
+                <li>AI 对话节点</li>
+                <li>条件判断节点</li>
+                <li>HTTP 请求节点</li>
+                <li>插件调用节点</li>
+            </ul>
+        </div>
+
+        <div class="feature">
+            <h3>高级功能</h3>
+            <ul>
+                <li><strong>上下文拼接</strong>: 智能组合检索结果和对话历史</li>
+                <li><strong>引用追踪</strong>: 显示答案来源,可溯源验证</li>
+                <li><strong>敏感词过滤</strong>: 自定义敏感词库,保护内容安全</li>
+                <li><strong>指定回复</strong>: 针对特定问题设置固定答案</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="content">
+        <h2>发布与分享</h2>
+        <p>多种方式发布和集成你的应用:</p>
+        <ul>
+            <li><strong>Web 链接</strong>: 生成独立访问链接,可嵌入网站</li>
+            <li><strong>API 调用</strong>: 提供标准 REST API,方便系统集成</li>
+            <li><strong>微信公众号</strong>: 接入公众号,打造智能客服</li>
+            <li><strong>飞书/钉钉</strong>: 集成企业通讯工具</li>
+        </ul>
+    </div>
+
+    <footer style="margin-top: 50px; padding-top: 20px; border-top: 1px solid #ddd; text-align: center; color: #666;">
+        <p>FastGPT 测试站点 © 2025 | 用于知识库同步功能测试</p>
+    </footer>
+</body>
+</html>

@@ -590,6 +590,8 @@
   "core.dataset.website.Confirm Update Tips": "确认更新站点配置？会立即按新的配置开始同步，请确认！",
   "core.dataset.website.Selector": "选择器",
   "core.dataset.website.Selector Course": "使用教程",
+  "core.dataset.website.Max Depth": "最大深度",
+  "core.dataset.website.Max Depth Tip": "设置网站爬取的最大深度，范围 1-10。深度越大，爬取的页面越多，但耗时也越长。建议设置为 2-3。",
   "core.dataset.website.Start Sync": "开始同步",
   "core.dataset.website.UnValid Website Tip": "您的站点可能非静态站点，无法同步",
   "core.module.Add question type": "添加问题类型",

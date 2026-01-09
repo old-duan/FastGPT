@@ -66,12 +66,13 @@ const Dataset = () => {
 
   const onSelectDatasetType = useCallback(
     (e: CreateDatasetType) => {
-      if (!feConfigs?.isPlus && [DatasetTypeEnum.websiteDataset].includes(e)) {
-        return toast({
-          status: 'warning',
-          title: t('common:commercial_function_tip')
-        });
-      }
+      // 已移除商业版限制 - Web站点同步功能现在对所有用户开放
+      // if (!feConfigs?.isPlus && [DatasetTypeEnum.websiteDataset].includes(e)) {
+      //   return toast({
+      //     status: 'warning',
+      //     title: t('common:commercial_function_tip')
+      //   });
+      // }
       setCreateDatasetType(e);
     },
     [t, toast, feConfigs]

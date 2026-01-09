@@ -3,9 +3,9 @@
   "version": "4.14.4",
   "private": false,
   "scripts": {
-    "dev": "npm run build:workers && next dev",
+    "dev": "npm run build:workers && next dev -H 0.0.0.0",
     "build": "npm run build:workers && next build",
-    "start": "next start",
+    "start": "next start -H 0.0.0.0",
     "lint": "next lint",
     "build:workers": "npx tsx scripts/build-workers.ts",
     "build:workers:watch": "npx tsx scripts/build-workers.ts --watch"

@@ -112,14 +112,15 @@ const OutLink = () => {
           value={linkType}
           onChange={(e) => {
             const config = publishList.current.find((v) => v.value === e)!;
-            if (!feConfigs.isPlus && config.isProFn) {
-              toast({
-                status: 'warning',
-                title: t('common:commercial_function_tip')
-              });
-            } else {
-              setLinkType(e as PublishChannelEnum);
-            }
+            // 高级版配置：移除发布渠道商业版限制
+            // if (!feConfigs.isPlus && config.isProFn) {
+            //   toast({
+            //     status: 'warning',
+            //     title: t('common:commercial_function_tip')
+            //   });
+            // } else {
+            setLinkType(e as PublishChannelEnum);
+            // }
           }}
         />
       </Box>

@@ -51,66 +51,77 @@ export default function VariablePickerPlugin({
         anchorElementRef,
         { selectedIndex, selectOptionAndCleanUp, setHighlightedIndex }
       ) => {
-        if (anchorElementRef.current == null) {
+        const anchorElement = anchorElementRef.current;
+        // 严格检查DOM节点是否存在、已连接到文档且是有效元素
+        if (
+          !anchorElement ||
+          !anchorElement.isConnected ||
+          !(anchorElement instanceof Element) ||
+          !variables.length
+        ) {
           return null;
         }
-        return anchorElementRef.current && variables.length
-          ? ReactDOM.createPortal(
-              <Box
-                bg={'white'}
-                boxShadow={'lg'}
-                borderWidth={'1px'}
-                borderColor={'borderColor.base'}
-                p={2}
-                borderRadius={'md'}
-                position={'absolute'}
-                w={'auto'}
-                zIndex={99999}
-                maxH={'300px'}
-                overflow={'auto'}
-              >
-                {variables.map((item, index) => (
-                  <Flex
-                    alignItems={'center'}
-                    as={'li'}
-                    key={item.key}
-                    px={4}
-                    py={2}
-                    borderRadius={'sm'}
-                    cursor={'pointer'}
-                    maxH={'300px'}
-                    overflow={'auto'}
-                    _notLast={{
-                      mb: 2
-                    }}
-                    {...(selectedIndex === index
-                      ? {
-                          bg: 'primary.50',
-                          color: 'primary.600'
-                        }
-                      : {
-                          bg: 'white',
-                          color: 'myGray.600'
-                        })}
-                    onClick={() => {
-                      setHighlightedIndex(index);
-                      selectOptionAndCleanUp(item);
-                    }}
-                    onMouseEnter={() => {
-                      setHighlightedIndex(index);
-                    }}
-                  >
-                    <MyIcon name={(item.icon as any) || 'core/modules/variable'} w={'14px'} />
-                    <Box ml={2} fontSize={'sm'} whiteSpace={'nowrap'}>
-                      {item.key}
-                      {item.key !== item.label && `(${t(item.label as any)})`}
-                    </Box>
-                  </Flex>
-                ))}
-              </Box>,
-              anchorElementRef.current
-            )
-          : null;
+
+        try {
+          return ReactDOM.createPortal(
+            <Box
+              bg={'white'}
+              boxShadow={'lg'}
+              borderWidth={'1px'}
+              borderColor={'borderColor.base'}
+              p={2}
+              borderRadius={'md'}
+              position={'absolute'}
+              w={'auto'}
+              zIndex={99999}
+              maxH={'300px'}
+              overflow={'auto'}
+            >
+              {variables.map((item, index) => (
+                <Flex
+                  alignItems={'center'}
+                  as={'li'}
+                  key={item.key}
+                  px={4}
+                  py={2}
+                  borderRadius={'sm'}
+                  cursor={'pointer'}
+                  maxH={'300px'}
+                  overflow={'auto'}
+                  _notLast={{
+                    mb: 2
+                  }}
+                  {...(selectedIndex === index
+                    ? {
+                        bg: 'primary.50',
+                        color: 'primary.600'
+                      }
+                    : {
+                        bg: 'white',
+                        color: 'myGray.600'
+                      })}
+                  onClick={() => {
+                    setHighlightedIndex(index);
+                    selectOptionAndCleanUp(item);
+                  }}
+                  onMouseEnter={() => {
+                    setHighlightedIndex(index);
+                  }}
+                >
+                  <MyIcon name={(item.icon as any) || 'core/modules/variable'} w={'14px'} />
+                  <Box ml={2} fontSize={'sm'} whiteSpace={'nowrap'}>
+                    {item.key}
+                    {item.key !== item.label && `(${t(item.label as any)})`}
+                  </Box>
+                </Flex>
+              ))}
+            </Box>,
+            anchorElement
+          );
+        } catch (error) {
+          console.error('VariablePickerPlugin Portal render error:', error);
+          return null;
+        }
       }}
     />
   );

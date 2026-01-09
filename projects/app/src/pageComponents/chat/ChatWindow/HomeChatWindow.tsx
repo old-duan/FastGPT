@@ -94,7 +94,7 @@ const HomeChatWindow = ({ myApps }: Props) => {
   const totalRecordsCount = useContextSelector(ChatRecordContext, (v) => v.totalRecordsCount);
 
   const isQuickApp = useMemo(
-    () => chatSettings?.quickAppList.some((app) => app._id === appId),
+    () => (chatSettings?.quickAppList || []).some((app) => app._id === appId),
     [chatSettings?.quickAppList, appId]
   );
 

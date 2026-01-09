@@ -92,7 +92,8 @@ export async function getInitConfig() {
       if (process.env.NODE_ENV === 'development') {
         global.systemVersion = process.env.npm_package_version || '0.0.0';
       } else {
-        const packageJson = json5.parse(await fs.promises.readFile('/app/package.json', 'utf-8'));
+        const packageJsonPath = process.env.PACKAGE_JSON_PATH || '/app/package.json';
+        const packageJson = json5.parse(await fs.promises.readFile(packageJsonPath, 'utf-8'));
 
         global.systemVersion = packageJson?.version;
       }
@@ -144,13 +145,13 @@ export async function initSystemConfig() {
       ...fileRes?.feConfigs,
       ...defaultFeConfigs,
       ...(fastgptConfig.feConfigs || {}),
-      isPlus: !!licenseData,
+      isPlus: true, // 高级版配置：始终启用商业版功能 (原: !!licenseData)
       hideChatCopyrightSetting: process.env.HIDE_CHAT_COPYRIGHT_SETTING === 'true',
       show_aiproxy: !!process.env.AIPROXY_API_ENDPOINT,
       show_coupon: process.env.SHOW_COUPON === 'true',
       show_discount_coupon: process.env.SHOW_DISCOUNT_COUPON === 'true',
-      show_dataset_enhance: licenseData?.functions?.datasetEnhance,
-      show_batch_eval: licenseData?.functions?.batchEval
+      show_dataset_enhance: true, // 高级版配置：启用知识库增强 (原: licenseData?.functions?.datasetEnhance)
+      show_batch_eval: true // 高级版配置：启用批量评测 (原: licenseData?.functions?.batchEval)
     },
     systemEnv: {
       ...fileRes.systemEnv,

@@ -1,0 +1,28 @@
+<svg viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" width="128" height="128">
+    <!-- Ollama Llama Logo -->
+    <defs>
+        <linearGradient id="ollamaGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#ffffff;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#e0e0e0;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <!-- Background circle -->
+    <circle cx="512" cy="512" r="480" fill="#000000"/>
+    <!-- Llama head shape - simplified -->
+    <ellipse cx="512" cy="520" rx="280" ry="320" fill="url(#ollamaGradient)"/>
+    <!-- Left ear -->
+    <path d="M320 280 L280 120 L360 200 Z" fill="url(#ollamaGradient)"/>
+    <!-- Right ear -->
+    <path d="M704 280 L744 120 L664 200 Z" fill="url(#ollamaGradient)"/>
+    <!-- Left eye -->
+    <ellipse cx="400" cy="450" rx="40" ry="50" fill="#000000"/>
+    <!-- Right eye -->
+    <ellipse cx="624" cy="450" rx="40" ry="50" fill="#000000"/>
+    <!-- Nose/snout area -->
+    <ellipse cx="512" cy="620" rx="100" ry="80" fill="#f5f5f5"/>
+    <!-- Nostrils -->
+    <ellipse cx="470" cy="620" rx="15" ry="20" fill="#333333"/>
+    <ellipse cx="554" cy="620" rx="15" ry="20" fill="#333333"/>
+    <!-- Mouth line -->
+    <path d="M450 700 Q512 750 574 700" stroke="#333333" stroke-width="8" fill="none"/>
+</svg>

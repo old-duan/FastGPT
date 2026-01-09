@@ -75,6 +75,7 @@ export type DatasetSchemaType = {
   websiteConfig?: {
     url: string;
     selector: string;
+    maxDepth?: number;
   };
 
   chunkSettings?: ChunkSettingsType;

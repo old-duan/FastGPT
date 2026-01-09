@@ -22,6 +22,7 @@ export type WebsiteConfigFormType = {
   websiteConfig: {
     url: string;
     selector: string;
+    maxDepth?: number;
   };
   chunkSettings: ChunkSettingsType;
 };
@@ -56,7 +57,8 @@ const WebsiteConfigModal = ({
   } = useForm({
     defaultValues: {
       url: websiteConfig?.url || '',
-      selector: websiteConfig?.selector || ''
+      selector: websiteConfig?.selector || '',
+      maxDepth: websiteConfig?.maxDepth || 2
     }
   });
 
@@ -148,6 +150,23 @@ const WebsiteConfigModal = ({
                 {t('common:core.dataset.website.Selector')}({t('common:choosable')})
               </Box>
               <Input {...websiteInfoForm('selector')} placeholder="body .content #document" />
+            </Box>
+            <Box mt={3}>
+              <Box>{t('common:core.dataset.website.Max Depth')}</Box>
+              <Input
+                type="number"
+                min={1}
+                max={10}
+                {...websiteInfoForm('maxDepth', {
+                  required: true,
+                  valueAsNumber: true,
+                  validate: (value) => value >= 1 && value <= 10
+                })}
+                placeholder="2"
+              />
+              <Box fontSize={'xs'} color={'myGray.500'} mt={1}>
+                {t('common:core.dataset.website.Max Depth Tip')}
+              </Box>
             </Box>
           </>
         )}

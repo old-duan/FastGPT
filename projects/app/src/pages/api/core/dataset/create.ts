@@ -43,7 +43,9 @@ async function handler(
     vectorModel = getDefaultEmbeddingModel()?.model,
     agentModel = getDatasetModel()?.model,
     vlmModel,
-    apiDatasetServer
+    apiDatasetServer,
+    websiteConfig,
+    chunkSettings
   } = req.body;
 
   // auth
@@ -89,7 +91,9 @@ async function handler(
           vlmModel,
           avatar,
           type,
-          apiDatasetServer
+          apiDatasetServer,
+          websiteConfig,
+          chunkSettings
         }
       ],
       { session, ordered: true }

@@ -11,3 +11,22 @@ yalc.lock
 testApi/
 *.local.*
 *.local
+
+# 排除大文件和文档
+docs/
+document/
+test/
+scripts/
+deploy/
+*.md
+*.html
+temp_*
+BUILD_*
+DEPLOYMENT_*
+*.log
+*.ps1
+
+# 排除非必要项目  
+projects/marketplace/
+projects/mcp_server/
+projects/sandbox/

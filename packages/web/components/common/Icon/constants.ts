@@ -442,6 +442,7 @@ export const iconPaths = {
   'model/cohere': () => import('./icons/model/cohere.svg'),
   'model/coze': () => import('./icons/model/coze.svg'),
   'model/huggingface': () => import('./icons/model/huggingface.svg'),
+  'model/ollama': () => import('./icons/model/ollama.svg'),
   more: () => import('./icons/more.svg'),
   moreLine: () => import('./icons/moreLine.svg'),
   'navbar/chatFill': () => import('./icons/navbar/chatFill.svg'),

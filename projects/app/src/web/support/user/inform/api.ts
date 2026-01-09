@@ -10,7 +10,7 @@ export const getUnreadCount = () =>
   GET<{
     unReadCount: number;
     importantInforms: UserInformType[];
-  }>(`/proApi/support/user/inform/countUnread`);
+  }>(`/support/user/inform/countUnread`);
 export const readInform = (id: string) => GET(`/proApi/support/user/inform/read`, { id });
 
 export const getSystemMsgModalData = () =>

@@ -105,7 +105,7 @@ const HeaderTagPopOver = () => {
 
             <Box my={1} px={1.5} maxH={'240px'} overflow={'auto'}>
               {searchTagKey &&
-                !searchDatasetTagsResult.map((item) => item.tag).includes(searchTagKey) && (
+                !searchDatasetTagsResult?.map((item) => item.tag).includes(searchTagKey) && (
                   <Flex
                     alignItems={'center'}
                     fontSize={'sm'}

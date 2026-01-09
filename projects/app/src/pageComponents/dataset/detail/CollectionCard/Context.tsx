@@ -136,7 +136,10 @@ const CollectionPageContextProvider = ({ children }: { children: ReactNode }) =>
     },
     {
       onSuccess() {
-        onCloseWebsiteModal();
+        // 延迟关闭 Modal 避免 removeChild 错误
+        setTimeout(() => {
+          onCloseWebsiteModal();
+        }, 100);
       }
     }
   );

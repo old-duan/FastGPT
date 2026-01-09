@@ -10,13 +10,15 @@ import { TeamMemberStatusEnum } from '@fastgpt/global/support/user/team/constant
 import { getVectorCountByTeamId } from '../../common/vectorDB/controller';
 
 export const checkTeamAIPoints = async (teamId: string) => {
+  // 高级版配置：移除 AI 积分限制检查
   if (!global.subPlans?.standard) return;
 
   const { totalPoints, usedPoints } = await teamPoint.getTeamPoints({ teamId });
 
-  if (usedPoints >= totalPoints) {
-    return Promise.reject(TeamErrEnum.aiPointsNotEnough);
-  }
+  // 取消积分限制，始终允许使用
+  // if (usedPoints >= totalPoints) {
+  //   return Promise.reject(TeamErrEnum.aiPointsNotEnough);
+  // }
 
   return {
     totalPoints,
@@ -25,6 +27,7 @@ export const checkTeamAIPoints = async (teamId: string) => {
 };
 
 export const checkTeamMemberLimit = async (teamId: string, newCount: number) => {
+  // 高级版配置：移除团队成员数量限制
   const [{ standardConstants }, memberCount] = await Promise.all([
     getTeamStandPlan({
       teamId
@@ -35,9 +38,10 @@ export const checkTeamMemberLimit = async (teamId: string, newCount: number) => 
     })
   ]);
 
-  if (standardConstants && newCount + memberCount > standardConstants.maxTeamMember) {
-    return Promise.reject(TeamErrEnum.teamOverSize);
-  }
+  // 取消成员数量限制
+  // if (standardConstants && newCount + memberCount > standardConstants.maxTeamMember) {
+  //   return Promise.reject(TeamErrEnum.teamOverSize);
+  // }
 };
 
 export const checkTeamAppTypeLimit = async ({
@@ -60,9 +64,10 @@ export const checkTeamAppTypeLimit = async ({
       })
     ]);
 
-    if (standardConstants && appCount + amount > standardConstants.maxAppAmount) {
-      return Promise.reject(TeamErrEnum.appAmountNotEnough);
-    }
+    // 高级版配置：移除应用数量限制
+    // if (standardConstants && appCount + amount > standardConstants.maxAppAmount) {
+    //   return Promise.reject(TeamErrEnum.appAmountNotEnough);
+    // }
 
     // System check
     if (global?.licenseData?.maxApps && typeof global?.licenseData?.maxApps === 'number') {
@@ -112,13 +117,14 @@ export const checkDatasetIndexLimit = async ({
 
   if (!standardConstants) return;
 
-  if (usedDatasetIndexSize + insertLen >= datasetMaxSize) {
-    return Promise.reject(TeamErrEnum.datasetSizeNotEnough);
-  }
+  // 高级版配置：移除知识库容量和积分限制
+  // if (usedDatasetIndexSize + insertLen >= datasetMaxSize) {
+  //   return Promise.reject(TeamErrEnum.datasetSizeNotEnough);
+  // }
 
-  if (usedPoints >= totalPoints) {
-    return Promise.reject(TeamErrEnum.aiPointsNotEnough);
-  }
+  // if (usedPoints >= totalPoints) {
+  //   return Promise.reject(TeamErrEnum.aiPointsNotEnough);
+  // }
   return;
 };
 
@@ -131,8 +137,9 @@ export const checkTeamDatasetLimit = async (teamId: string) => {
     })
   ]);
 
+  // 高级版配置：移除知识库数量限制
   // User check
-  if (standardConstants && datasetCount >= standardConstants.maxDatasetAmount) {
+  if (false && standardConstants && datasetCount >= standardConstants.maxDatasetAmount) {
     return Promise.reject(TeamErrEnum.datasetAmountNotEnough);
   }
 
@@ -148,11 +155,13 @@ export const checkTeamDatasetLimit = async (teamId: string) => {
 };
 
 export const checkTeamDatasetSyncPermission = async (teamId: string) => {
-  const { standardConstants } = await getTeamStandPlan({
-    teamId
-  });
+  // 已移除商业版限制 - Web站点同步功能现在对所有用户开放
+  // const { standardConstants } = await getTeamStandPlan({
+  //   teamId
+  // });
 
-  if (standardConstants && !standardConstants?.websiteSyncPerDataset) {
-    return Promise.reject(TeamErrEnum.websiteSyncNotEnough);
-  }
+  // if (standardConstants && !standardConstants?.websiteSyncPerDataset) {
+  //   return Promise.reject(TeamErrEnum.websiteSyncNotEnough);
+  // }
+  return Promise.resolve(); // 直接允许所有用户使用
 };

@@ -12,8 +12,8 @@ x-share-db-config: &x-share-db-config
   MONGODB_URI: mongodb://myusername:mypassword@mongo:27017/fastgpt?authSource=admin
   DB_MAX_LINK: 100
   REDIS_URL: redis://default:mypassword@redis:6379
-  S3_EXTERNAL_BASE_URL: https://minio.com # S3 的公网访问地址
-  S3_ENDPOINT: fastgpt-minio
+  S3_EXTERNAL_BASE_URL: http://192.168.110.18:9000 # 局域网访问地址
+  S3_ENDPOINT: host.docker.internal # 容器访问主机的MinIO
   S3_PORT: 9000
   S3_USE_SSL: false
   S3_ACCESS_KEY: minioadmin
@@ -135,7 +135,7 @@ services:
 
   fastgpt:
     container_name: fastgpt
-    image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt:v4.14.3 # git
+    image: fastgpt-advanced:latest # 高级版镜像 (原版: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt:v4.14.4)
     ports:
       - 3000:3000
     networks:
@@ -148,7 +148,7 @@ services:
     environment:
       <<: [*x-share-db-config, *x-vec-config]
       # 前端外部可访问的地址，用于自动补全文件资源路径。例如 https:fastgpt.cn，不能填 localhost。这个值可以不填，不填则发给模型的图片会是一个相对路径，而不是全路径，模型可能伪造Host。
-      FE_DOMAIN:
+      FE_DOMAIN: http://192.168.110.18:3000
       # root 密码，用户名为: root。如果需要修改 root 密码，直接修改这个环境变量，并重启即可。
       DEFAULT_ROOT_PSW: 1234
       # 登录凭证密钥
@@ -181,17 +181,17 @@ services:
       CHAT_FILE_EXPIRE_TIME: 7
       # 服务器接收请求，最大大小，单位 MB
       SERVICE_REQUEST_MAX_CONTENT_LENGTH: 10
-    volumes:
-      - ./config.json:/app/data/config.json
+    # volumes:
+    #   - ./config.json:/app/data/config.json
   sandbox:
     container_name: sandbox
-    image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-sandbox:v4.14.3
+    image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-sandbox:v4.14.4
     networks:
       - fastgpt
     restart: always
   fastgpt-mcp-server:
     container_name: fastgpt-mcp-server
-    image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-mcp_server:v4.14.3
+    image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-mcp_server:v4.14.4
     networks:
       - fastgpt
     ports:
@@ -200,7 +200,7 @@ services:
     environment:
       - FASTGPT_ENDPOINT=http://fastgpt:3000
   fastgpt-plugin:
-    image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-plugin:v0.3.3
+    image: registry.cn-hangzhou.aliyuncs.com/fastgpt/fastgpt-plugin:v0.3.4
     container_name: fastgpt-plugin
     restart: always
     networks:

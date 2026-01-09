@@ -1,0 +1,21 @@
+{
+  "timestamp": "2025-12-31T01:23:54.871Z",
+  "method": "POST",
+  "url": "/api/feishu-debug",
+  "headers": {
+    "host": "127.0.0.1:3000",
+    "user-agent": "Mozilla/5.0 (Windows NT 10.0; Microsoft Windows 10.0.22621; zh-CN) PowerShell/7.5.2",
+    "accept-encoding": "gzip, deflate, br",
+    "content-type": "application/json",
+    "content-length": "16",
+    "x-forwarded-host": "127.0.0.1:3000",
+    "x-forwarded-port": "3000",
+    "x-forwarded-proto": "http",
+    "x-forwarded-for": "127.0.0.1"
+  },
+  "body": {
+    "test": "hello"
+  },
+  "query": {}
+}
+

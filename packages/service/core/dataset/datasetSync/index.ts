@@ -1,11 +1,13 @@
 import { type Processor } from 'bullmq';
 import { getQueue, getWorker, QueueNames } from '../../../common/bullmq';
 import { DatasetStatusEnum } from '@fastgpt/global/core/dataset/constants';
+import { addLog } from '../../../common/system/log';
 
 export type DatasetSyncJobData = {
   datasetId: string;
 };
 
+addLog.info(`[DatasetSync] Initializing queue with name: ${QueueNames.datasetSync}`);
 export const datasetSyncQueue = getQueue<DatasetSyncJobData>(QueueNames.datasetSync, {
   defaultJobOptions: {
     attempts: 3, // retry 3 times
@@ -15,6 +17,7 @@ export const datasetSyncQueue = getQueue<DatasetSyncJobData>(QueueNames.datasetS
     }
   }
 });
+addLog.info(`[DatasetSync] Queue initialized successfully`);
 export const getDatasetSyncWorker = (processor: Processor<DatasetSyncJobData>) => {
   return getWorker<DatasetSyncJobData>(QueueNames.datasetSync, processor, {
     removeOnFail: {
@@ -25,10 +28,15 @@ export const getDatasetSyncWorker = (processor: Processor<DatasetSyncJobData>) =
   });
 };
 
-export const addDatasetSyncJob = (data: DatasetSyncJobData) => {
+export const addDatasetSyncJob = async (data: DatasetSyncJobData) => {
   const datasetId = String(data.datasetId);
+  addLog.info(`[DatasetSync] Adding job for dataset: ${datasetId}`);
   // deduplication: make sure only 1 job
-  return datasetSyncQueue.add(datasetId, data, { deduplication: { id: datasetId } });
+  const result = await datasetSyncQueue.add(datasetId, data, { deduplication: { id: datasetId } });
+  addLog.info(
+    `[DatasetSync] Job added successfully for dataset: ${datasetId}, jobId: ${result?.id}`
+  );
+  return result;
 };
 
 export const getDatasetSyncDatasetStatus = async (datasetId: string) => {

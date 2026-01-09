@@ -88,7 +88,9 @@ export const initTeamFreePlan = async ({
   teamId: string;
   session?: ClientSession;
 }) => {
-  const freePoints = global?.subPlans?.standard?.[StandardSubLevelEnum.free]?.totalPoints || 100;
+  // 修改为高级版配置 - 本地部署解锁所有功能
+  const advancedPlan = global?.subPlans?.standard?.[StandardSubLevelEnum.advanced];
+  const advancedPoints = advancedPlan?.totalPoints || 300000;
 
   const freePlan = await MongoTeamSub.findOne({
     teamId,
@@ -96,21 +98,22 @@ export const initTeamFreePlan = async ({
     currentSubLevel: StandardSubLevelEnum.free
   });
 
-  // Reset one month free plan
+  // Reset one month plan (upgrade to advanced)
   if (freePlan) {
     freePlan.currentMode = SubModeEnum.month;
     freePlan.nextMode = SubModeEnum.month;
     freePlan.startTime = new Date();
-    freePlan.expiredTime = addMonths(new Date(), 1);
+    freePlan.expiredTime = addMonths(new Date(), 99 * 12); // 99年有效期
 
-    freePlan.currentSubLevel = StandardSubLevelEnum.free;
-    freePlan.nextSubLevel = StandardSubLevelEnum.free;
+    // 设置为高级版
+    freePlan.currentSubLevel = StandardSubLevelEnum.advanced;
+    freePlan.nextSubLevel = StandardSubLevelEnum.advanced;
 
-    freePlan.totalPoints = freePoints;
+    freePlan.totalPoints = advancedPoints;
     freePlan.surplusPoints =
       freePlan.surplusPoints && freePlan.surplusPoints < 0
-        ? freePlan.surplusPoints + freePoints
-        : freePoints;
+        ? freePlan.surplusPoints + advancedPoints
+        : advancedPoints;
     return freePlan.save({ session });
   }
 
@@ -122,13 +125,14 @@ export const initTeamFreePlan = async ({
         currentMode: SubModeEnum.month,
         nextMode: SubModeEnum.month,
         startTime: new Date(),
-        expiredTime: addMonths(new Date(), 1),
+        expiredTime: addMonths(new Date(), 99 * 12), // 99年有效期
 
-        currentSubLevel: StandardSubLevelEnum.free,
-        nextSubLevel: StandardSubLevelEnum.free,
+        // 设置为高级版
+        currentSubLevel: StandardSubLevelEnum.advanced,
+        nextSubLevel: StandardSubLevelEnum.advanced,
 
-        totalPoints: freePoints,
-        surplusPoints: freePoints
+        totalPoints: advancedPoints,
+        surplusPoints: advancedPoints
       }
     ],
     { session, ordered: true }

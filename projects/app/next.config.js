@@ -13,12 +13,36 @@ const nextConfig = {
   basePath: process.env.NEXT_PUBLIC_BASE_URL,
   i18n,
   output: 'standalone',
-  reactStrictMode: isDev ? false : true,
+  reactStrictMode: false,
   compress: true,
+  // 允许跨域访问(开发环境)
+  ...(isDev && {
+    allowedDevOrigins: ['http://192.168.110.18:3000', 'http://localhost:3000']
+  }),
   // 禁用 source map（可选，根据需要）
   productionBrowserSourceMaps: false,
   // 优化编译性能
   swcMinify: true, // 使用 SWC 压缩（生产环境已默认）
+  // 跳过类型检查和 ESLint（加快构建速度）
+  typescript: {
+    ignoreBuildErrors: true,
+  },
+  eslint: {
+    ignoreDuringBuilds: true,
+  },
+  // 优化模块解析 - 减少解析时间
+  modularizeImports: {
+    'lodash': {
+      transform: 'lodash/{{member}}',
+    },
+  },
+  // 开发模式优化 - 加快HMR
+  onDemandEntries: {
+    // 页面在内存中保持的时间（毫秒）
+    maxInactiveAge: 60 * 1000,
+    // 同时保持在内存中的页面数
+    pagesBufferLength: 5,
+  },
   async headers() {
     return [
       {

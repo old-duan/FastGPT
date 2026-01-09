@@ -62,5 +62,9 @@
       "name": "pnpm",
       "version": "9.15.9"
     }
+  },
+  "dependencies": {
+    "json5": "^2.2.3",
+    "mongodb": "^7.0.0"
   }
 }
