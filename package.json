@@ -64,6 +64,7 @@
     }
   },
   "dependencies": {
+    "alipay-sdk": "^4.14.0",
     "json5": "^2.2.3",
     "mongodb": "^7.0.0"
   }
