@@ -21,11 +21,12 @@ import { useConfirm } from '@fastgpt/web/hooks/useConfirm';
 import EmptyTip from '@fastgpt/web/components/common/EmptyTip';
 import MyLoading from '@fastgpt/web/components/common/MyLoading';
 import type { CustomDomainType } from '@fastgpt/global/support/customDomain/type';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { StandardSubLevelEnum } from '@fastgpt/global/support/wallet/sub/constants';
 import { useRouter } from 'next/router';
 import Tag from '@fastgpt/web/components/common/Tag';
+import { CLIENT_FEATURES } from '@/config/features';
 
 const CreateCustomDomainModal = dynamic(
   () => import('@/pageComponents/account/customDomain/createModal')
@@ -40,6 +41,16 @@ const CustomDomain = () => {
   const { t } = useTranslation();
   const router = useRouter();
   const { teamPlanStatus } = useUserStore();
+
+  useEffect(() => {
+    // 功能未启用，重定向到账号信息页
+    if (!CLIENT_FEATURES.CUSTOM_DOMAIN) {
+      router.replace('/account/info');
+    }
+  }, [router]);
+
+  // 功能未启用时不渲染页面
+  if (!CLIENT_FEATURES.CUSTOM_DOMAIN) return null;
 
   const {
     data: customDomainList,

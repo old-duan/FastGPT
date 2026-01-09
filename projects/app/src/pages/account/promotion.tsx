@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Grid,
   Box,
@@ -19,6 +19,7 @@ import { useTranslation } from 'next-i18next';
 import { useQuery } from '@tanstack/react-query';
 import { getPromotionInitData, getPromotionRecords } from '@/web/support/activity/promotion/api';
 import { useUserStore } from '@/web/support/user/useUserStore';
+import { useRouter } from 'next/router';
 
 import { useCopyData } from '@fastgpt/web/hooks/useCopyData';
 import dayjs from 'dayjs';
@@ -28,13 +29,25 @@ import QuestionTip from '@fastgpt/web/components/common/MyTooltip/QuestionTip';
 import EmptyTip from '@fastgpt/web/components/common/EmptyTip';
 import AccountContainer from '@/pageComponents/account/AccountContainer';
 import { serviceSideProps } from '@/web/common/i18n/utils';
+import { CLIENT_FEATURES } from '@/config/features';
 
 const Promotion = () => {
+  const router = useRouter();
   const { t } = useTranslation();
   const theme = useTheme();
   const { copyData } = useCopyData();
   const { userInfo } = useUserStore();
   const { Loading } = useLoading();
+
+  useEffect(() => {
+    // 推广功能未启用，重定向到账号信息页
+    if (!CLIENT_FEATURES.PROMOTION) {
+      router.replace('/account/info');
+    }
+  }, [router]);
+
+  // 功能未启用时不渲染页面
+  if (!CLIENT_FEATURES.PROMOTION) return null;
 
   const {
     data: promotionRecords,

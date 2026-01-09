@@ -3,8 +3,10 @@ import { jsonRes } from '@fastgpt/service/common/response';
 
 import { Agent, request } from 'http';
 import { FastGPTProUrl } from '@fastgpt/service/common/system/constants';
+import { FEATURES } from '@/config/features';
 
 // Mock数据定义 - 为开源版本提供商业版功能的fallback
+// 使用特性开关控制企业功能的启用/禁用
 const mockResponses: Record<string, any> = {
   // ==================== 协作者管理 ====================
   'core/dataset/collaborator/list': {
@@ -211,85 +213,97 @@ const mockResponses: Record<string, any> = {
     data: null
   },
 
-  // ==================== 组织架构 ====================
-  'support/user/team/org/list': {
-    code: 200,
-    data: []
-  },
-  'support/user/team/org/create': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/org/delete': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/org/move': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/org/update': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/org/updateMembers': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/org/members': {
-    code: 200,
-    data: {
-      total: 0,
-      list: []
-    }
-  },
-  'support/user/team/org/deleteMember': {
-    code: 200,
-    data: null
-  },
+  // ==================== 组织架构（特性开关控制）====================
+  ...(FEATURES.ORG_STRUCTURE
+    ? {
+        'support/user/team/org/list': {
+          code: 200,
+          data: []
+        },
+        'support/user/team/org/create': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/org/delete': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/org/move': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/org/update': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/org/updateMembers': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/org/members': {
+          code: 200,
+          data: {
+            total: 0,
+            list: []
+          }
+        },
+        'support/user/team/org/deleteMember': {
+          code: 200,
+          data: null
+        }
+      }
+    : {}),
 
-  // ==================== 群组管理 ====================
-  'support/user/team/group/list': {
-    code: 200,
-    data: []
-  },
-  'support/user/team/group/create': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/group/delete': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/group/update': {
-    code: 200,
-    data: null
-  },
-  'support/user/team/group/members': {
-    code: 200,
-    data: []
-  },
-  'support/user/team/group/changeOwner': {
-    code: 200,
-    data: null
-  },
+  // ==================== 群组管理（特性开关控制）====================
+  ...(FEATURES.GROUP_MANAGE
+    ? {
+        'support/user/team/group/list': {
+          code: 200,
+          data: []
+        },
+        'support/user/team/group/create': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/group/delete': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/group/update': {
+          code: 200,
+          data: null
+        },
+        'support/user/team/group/members': {
+          code: 200,
+          data: []
+        },
+        'support/user/team/group/changeOwner': {
+          code: 200,
+          data: null
+        }
+      }
+    : {}),
 
-  // ==================== 审计日志 ====================
-  'support/user/audit/list': {
-    code: 200,
-    data: {
-      total: 0,
-      list: []
-    }
-  },
+  // ==================== 审计日志（特性开关控制）====================
+  ...(FEATURES.AUDIT_LOG
+    ? {
+        'support/user/audit/list': {
+          code: 200,
+          data: {
+            total: 0,
+            list: []
+          }
+        }
+      }
+    : {}),
 
   // ==================== 用户搜索和同步 ====================
   'support/user/search': {
     code: 200,
     data: {
       members: [],
-      groups: [],
-      orgs: []
+      groups: FEATURES.GROUP_MANAGE ? [] : undefined,
+      orgs: FEATURES.ORG_STRUCTURE ? [] : undefined
     }
   },
   'support/user/sync': {
@@ -297,21 +311,59 @@ const mockResponses: Record<string, any> = {
     data: null
   },
 
-  // ==================== 用户账号 ====================
-  'support/user/account/login/oauth': {
-    code: 403,
-    data: null,
-    message: '开源版不支持 OAuth 登录'
-  },
+  // ==================== 用户账号（OAuth/SSO 特性开关控制）====================
+  ...(FEATURES.OAUTH_LOGIN
+    ? {
+        'support/user/account/login/oauth': {
+          code: 200,
+          data: null
+        },
+        'support/user/account/login/wx/getQR': {
+          code: 200,
+          data: { qrCode: '' }
+        },
+        'support/user/account/login/wx/getResult': {
+          code: 200,
+          data: null
+        }
+      }
+    : {
+        'support/user/account/login/oauth': {
+          code: 403,
+          data: null,
+          message: 'OAuth 登录功能未启用'
+        },
+        'support/user/account/login/wx/getQR': {
+          code: 403,
+          data: null,
+          message: '微信登录功能未启用'
+        },
+        'support/user/account/login/wx/getResult': {
+          code: 403,
+          data: null,
+          message: '微信登录功能未启用'
+        }
+      }),
+
+  ...(FEATURES.SSO
+    ? {
+        'support/user/account/sso': {
+          code: 200,
+          data: null
+        }
+      }
+    : {
+        'support/user/account/sso': {
+          code: 403,
+          data: null,
+          message: 'SSO 功能未启用'
+        }
+      }),
+
   'support/user/account/login/fastLogin': {
     code: 403,
     data: null,
     message: '开源版不支持快速登录'
-  },
-  'support/user/account/sso': {
-    code: 403,
-    data: null,
-    message: '开源版不支持 SSO'
   },
   'support/user/account/register/emailAndPhone': {
     code: 403,
@@ -326,16 +378,6 @@ const mockResponses: Record<string, any> = {
   'support/user/account/updateContact': {
     code: 200,
     data: null
-  },
-  'support/user/account/login/wx/getQR': {
-    code: 403,
-    data: null,
-    message: '开源版不支持微信登录'
-  },
-  'support/user/account/login/wx/getResult': {
-    code: 403,
-    data: null,
-    message: '开源版不支持微信登录'
   },
   'support/user/account/captcha/getImgCaptcha': {
     code: 200,
@@ -401,80 +443,108 @@ const mockResponses: Record<string, any> = {
     data: null
   },
 
-  // ==================== 发票相关 ====================
-  'support/wallet/bill/invoice/unInvoiceList': {
-    code: 200,
-    data: []
-  },
-  'support/wallet/bill/invoice/submit': {
-    code: 403,
-    data: null,
-    message: '开源版不支持发票功能'
-  },
-  'support/wallet/bill/invoice/records': {
-    code: 200,
-    data: {
-      total: 0,
-      list: []
-    }
-  },
+  // ==================== 发票相关（特性开关控制）====================
+  ...(FEATURES.INVOICE
+    ? {
+        'support/wallet/bill/invoice/unInvoiceList': {
+          code: 200,
+          data: []
+        },
+        'support/wallet/bill/invoice/submit': {
+          code: 200,
+          data: null
+        },
+        'support/wallet/bill/invoice/records': {
+          code: 200,
+          data: {
+            total: 0,
+            list: []
+          }
+        }
+      }
+    : {
+        'support/wallet/bill/invoice/submit': {
+          code: 403,
+          data: null,
+          message: '发票功能未启用'
+        }
+      }),
 
-  // ==================== 优惠券 ====================
-  'support/wallet/coupon/redeem': {
-    code: 403,
-    data: null,
-    message: '开源版不支持优惠券'
-  },
-  'support/wallet/discountCoupon/list': {
-    code: 200,
-    data: []
-  },
+  // ==================== 优惠券（特性开关控制）====================
+  ...(FEATURES.COUPON
+    ? {
+        'support/wallet/coupon/redeem': {
+          code: 200,
+          data: null
+        },
+        'support/wallet/discountCoupon/list': {
+          code: 200,
+          data: []
+        }
+      }
+    : {
+        'support/wallet/coupon/redeem': {
+          code: 403,
+          data: null,
+          message: '优惠券功能未启用'
+        }
+      }),
 
-  // ==================== 自定义域名 ====================
-  'support/customDomain/list': {
-    code: 200,
-    data: []
-  },
-  'support/customDomain/checkDNSResolve': {
-    code: 200,
-    data: { success: false, message: '开源版不支持自定义域名' }
-  },
-  'support/customDomain/delete': {
-    code: 403,
-    data: null,
-    message: '开源版不支持自定义域名'
-  },
-  'support/customDomain/create': {
-    code: 403,
-    data: null,
-    message: '开源版不支持自定义域名'
-  },
-  'support/customDomain/active': {
-    code: 403,
-    data: null,
-    message: '开源版不支持自定义域名'
-  },
-  'support/customDomain/updateVerifyFile': {
-    code: 403,
-    data: null,
-    message: '开源版不支持自定义域名'
-  },
+  // ==================== 自定义域名（特性开关控制）====================
+  ...(FEATURES.CUSTOM_DOMAIN
+    ? {
+        'support/customDomain/list': {
+          code: 200,
+          data: []
+        },
+        'support/customDomain/checkDNSResolve': {
+          code: 200,
+          data: { success: true, message: '' }
+        },
+        'support/customDomain/delete': {
+          code: 200,
+          data: null
+        },
+        'support/customDomain/create': {
+          code: 200,
+          data: null
+        },
+        'support/customDomain/active': {
+          code: 200,
+          data: null
+        },
+        'support/customDomain/updateVerifyFile': {
+          code: 200,
+          data: null
+        }
+      }
+    : {
+        'support/customDomain/create': {
+          code: 403,
+          data: null,
+          message: '自定义域名功能未启用'
+        }
+      }),
 
-  // ==================== 活动推广 ====================
-  'support/activity/promotion/getPromotionData': {
-    code: 200,
-    data: {
-      promotionBalance: 0,
-      historyPromotion: 0
-    }
-  },
-  'support/activity/promotion/getPromotions': {
-    code: 200,
-    data: {
-      total: 0,
-      list: []
-    }
-  },
+  // ==================== 活动推广（特性开关控制）====================
+  ...(FEATURES.PROMOTION
+    ? {
+        'support/activity/promotion/getPromotionData': {
+          code: 200,
+          data: {
+            promotionBalance: 0,
+            historyPromotion: 0
+          }
+        },
+        'support/activity/promotion/getPromotions': {
+          code: 200,
+          data: {
+            total: 0,
+            list: []
+          }
+        }
+      }
+    : {}),
 
   // ==================== 对话设置 ====================
   'core/chat/initTeamChat': {

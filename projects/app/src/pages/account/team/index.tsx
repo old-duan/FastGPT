@@ -16,6 +16,7 @@ import { TeamContext, TeamModalContextProvider } from '@/pageComponents/account/
 import dynamic from 'next/dynamic';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useToast } from '@fastgpt/web/hooks/useToast';
+import { CLIENT_FEATURES } from '@/config/features';
 
 const MemberTable = dynamic(() => import('@/pageComponents/account/team/MemberTable'));
 const PermissionManage = dynamic(
@@ -71,10 +72,17 @@ const Team = () => {
       <FillRowTabs
         list={[
           { label: t('account_team:member'), value: TeamTabEnum.member },
-          { label: t('account_team:org'), value: TeamTabEnum.org },
-          { label: t('account_team:group'), value: TeamTabEnum.group },
+          // 组织架构（特性开关控制）
+          ...(CLIENT_FEATURES.ORG_STRUCTURE
+            ? [{ label: t('account_team:org'), value: TeamTabEnum.org }]
+            : []),
+          // 群组管理（特性开关控制）
+          ...(CLIENT_FEATURES.GROUP_MANAGE
+            ? [{ label: t('account_team:group'), value: TeamTabEnum.group }]
+            : []),
           { label: t('account_team:permission'), value: TeamTabEnum.permission },
-          ...(userInfo?.team.permission.hasManagePer
+          // 审计日志（特性开关控制 + 权限检查）
+          ...(CLIENT_FEATURES.AUDIT_LOG && userInfo?.team.permission.hasManagePer
             ? [{ label: t('account_team:audit_log'), value: TeamTabEnum.audit }]
             : [])
         ]}
@@ -97,7 +105,7 @@ const Team = () => {
         }}
       />
     ),
-    [planContent, router, t, teamTab, toast]
+    [planContent, router, t, teamTab, toast, userInfo?.team.permission.hasManagePer]
   );
 
   return (
@@ -173,10 +181,14 @@ const Team = () => {
           overflow={'auto'}
         >
           {teamTab === TeamTabEnum.member && <MemberTable Tabs={Tabs} />}
-          {teamTab === TeamTabEnum.org && <OrgManage Tabs={Tabs} />}
-          {teamTab === TeamTabEnum.group && <GroupManage Tabs={Tabs} />}
+          {CLIENT_FEATURES.ORG_STRUCTURE && teamTab === TeamTabEnum.org && (
+            <OrgManage Tabs={Tabs} />
+          )}
+          {CLIENT_FEATURES.GROUP_MANAGE && teamTab === TeamTabEnum.group && (
+            <GroupManage Tabs={Tabs} />
+          )}
           {teamTab === TeamTabEnum.permission && <PermissionManage Tabs={Tabs} />}
-          {teamTab === TeamTabEnum.audit && <AuditLog Tabs={Tabs} />}
+          {CLIENT_FEATURES.AUDIT_LOG && teamTab === TeamTabEnum.audit && <AuditLog Tabs={Tabs} />}
         </Box>
       </Flex>
       {invitelinkid && <HandleInviteModal invitelinkid={invitelinkid} />}
